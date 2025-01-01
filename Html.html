@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Color Charge Game</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(45deg, #000428, #004e92);
+      color: white;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+    .game-container {
+      margin: 50px auto;
+      padding: 20px;
+      max-width: 400px;
+      background: #282c34;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    .color-bar {
+      height: 40px;
+      width: 100%;
+      background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #8b00ff);
+      border-radius: 5px;
+      overflow: hidden;
+      position: relative;
+      margin: 20px 0;
+    }
+    .progress {
+      height: 100%;
+      background: rgba(255, 255, 255, 0.7);
+      width: 0;
+      transition: width 0.1s linear;
+    }
+    .status {
+      margin: 15px 0;
+    }
+    button {
+      background: #4caf50;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1em;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #45a049;
+    }
+    button:disabled {
+      background: grey;
+      cursor: not-allowed;
+    }
+    input {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      font-size: 1em;
+      text-align: center;
+      width: 90%;
+    }
+    .history {
+      margin-top: 20px;
+      background: #1e2328;
+      border-radius: 10px;
+      padding: 15px;
+      color: white;
+    }
+    .history ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .history li {
+      padding: 5px 0;
+      border-bottom: 1px solid #555;
+    }
+    .history li:last-child {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body>
+<p>Click the link below to log in:</p>
+<a href="login page\Login page.html">Login</a>
+  <div class="game-container">
+    <h1>Color Charge</h1>
+    <div class="status">
+      <p id="statusText">Place your bet and start the game!</p>
+    </div>
+    <div class="color-bar">
+      <div class="progress" id="progressBar"></div>
+    </div>
+    <input type="number" id="betAmount" placeholder="Enter your bet (₹)" min="1" />
+    <div>
+      <button id="startBtn">Start</button>
+      <button id="cashOutBtn" disabled>Cash Out</button>
+    </div>
+    <p>Your Winnings: ₹<span id="winnings">0</span></p>
+  </div>
+
+  <div class="history">
+    <h3>Winning History</h3>
+    <ul id="historyList">
+      <li>No winnings yet.</li>
+    </ul>
+  </div>
+
+  <script>
+    const progressBar = document.getElementById('progressBar');
+    const startButton = document.getElementById('startBtn');
+    const cashOutButton = document.getElementById('cashOutBtn');
+    const statusText = document.getElementById('statusText');
+    const winningsDisplay = document.getElementById('winnings');
+    const betAmountInput = document.getElementById('betAmount');
+    const historyList = document.getElementById('historyList');
+
+    let progress = 0;
+    let interval;
+    let crashPoint;
+    let isPlaying = false;
+    let winnings = 0;
+
+    const updateHistory = (cashOutWinnings) => {
+      const historyItem = document.createElement('li');
+      historyItem.textContent = `You cashed out with ₹${cashOutWinnings}`;
+      if (historyList.children[0].textContent === "No winnings yet.") {
+        historyList.innerHTML = ""; // Clear placeholder
+      }
+      historyList.appendChild(historyItem);
+    };
+
+    const startGame = () => {
+      const betAmount = parseFloat(betAmountInput.value);
+
+      if (isPlaying) return;
+      if (!betAmount || betAmount <= 0) {
+        statusText.textContent = "Please enter a valid bet amount.";
+        return;
+      }
+
+      isPlaying = true;
+      progress = 0;
+      crashPoint = Math.random() * 100; // Crash randomly between 0% and 100%
+      statusText.textContent = "Charging...";
+      progressBar.style.width = `${progress}%`;
+      cashOutButton.disabled = false;
+
+      interval = setInterval(() => {
+        progress += 1; // Increment progress
+        progressBar.style.width = `${progress}%`;
+
+        if (progress >= crashPoint) {
+          clearInterval(interval);
+          isPlaying = false;
+          statusText.innerHTML = `<span style="color: red;">Crashed at ${progress.toFixed(0)}%!</span>`;
+          cashOutButton.disabled = true;
+        } else if (progress >= 100) {
+          clearInterval(interval);
+          isPlaying = false;
+          statusText.innerHTML = `<span style="color: green;">Maxed out at 100%!</span>`;
+          cashOutButton.disabled = true;
+        }
+      }, 100);
+    };
+
+    const cashOut = () => {
+      const betAmount = parseFloat(betAmountInput.value);
+
+      if (!isPlaying) return;
+      clearInterval(interval);
+      isPlaying = false;
+
+      const cashOutWinnings = Math.floor((progress / 100) * betAmount); // Calculate winnings
+      winnings += cashOutWinnings;
+      winningsDisplay.textContent = winnings;
+      statusText.textContent = `You cashed out at ${progress.toFixed(0)}%! Winnings: ₹${cashOutWinnings}`;
+      cashOutButton.disabled = true;
+      updateHistory(cashOutWinnings);
+    };
+
+    startButton.addEventListener('click', startGame);
+    cashOutButton.addEventListener('click', cashOut);
+  </script>
+</body>
+</html>

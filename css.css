@@ -1,0 +1,89 @@
+/* General Body Styling */
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    background-color: black; /* Black background */
+    color: white; /* Text color for contrast */
+}
+
+/* Container for the Wheel */
+.wheel-container {
+    position: relative;
+    margin: 50px auto;
+    width: 300px;
+    height: 300px;
+}
+
+/* Rotating Wheel */
+.wheel {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    position: relative;
+    overflow: hidden;
+    transform-origin: center;
+}
+
+/* Triangular Segments */
+.segment {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    clip-path: polygon(50% 50%, 100% 0%, 100% 100%);
+}
+
+.segment:nth-child(1) {
+    background: red; /* First segment: Red */
+    transform: rotate(0deg);
+}
+
+.segment:nth-child(2) {
+    background: green; /* Second segment: Green */
+    transform: rotate(120deg);
+}
+
+.segment:nth-child(3) {
+    background: purple; /* Third segment: Purple */
+    transform: rotate(240deg);
+}
+
+/* Spin Button */
+#spin-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    font-size: 18px;
+    cursor: pointer;
+    border: none;
+    background-color: #444; /* Dark button color */
+    color: white;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+#spin-btn:hover {
+    background-color: #666; /* Lighter on hover */
+    transform: scale(1.05); /* Slight zoom effect */
+}
+
+/* History Section */
+#history {
+    margin-top: 20px;
+}
+
+#history h2 {
+    margin-bottom: 10px;
+    color: #ddd; /* Light gray heading for contrast */
+}
+
+#history-list {
+    list-style: none;
+    padding: 0;
+}
+
+#history-list li {
+    padding: 5px;
+    border-bottom: 1px solid #555; /* Subtle separator */
+    color: white; /* Text color for history items */
+}
